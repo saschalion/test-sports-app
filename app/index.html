@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sportsApp" ng-controller="SportsListCtrl">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body class="b-page">
+<div class="b-page__container">
+    <div class="b-head clearfix">
+        <h2 class="b-head__title">
+            Average Odds
+        </h2>
+        <div class="b-head__filters">
+            <label class="b-head__filter-label">
+                <select class="b-head__filter" data-ng-model="sportsProp.sport_id">
+                    <option value="">
+                        All Sports
+                    </option>
+                    <option data-ng-repeat="value in sports | unique:'sport_name' | orderBy:orderSports" value="{{ value.sport_id }}">{{ value.sport_name }}</option>
+                </select>
+            </label>
+
+            <label class="b-head__filter-label">
+                <select class="b-head__filter" data-ng-model="leaguesProp.league">
+                    <option value="">
+                        Leagues
+                    </option>
+                    <option data-ng-repeat="value in leagues | unique:'league' | orderBy:orderProp" value="{{ value.league }}">{{ value.league }}</option>
+                </select>
+            </label>
+        </div>
+    </div>
+
+    <section class="b-sports" data-ng-repeat="league in leagues | orderBy:orderProp | filter:sportsProp | filter:leaguesProp:strictComparator">
+        <h1 class="b-sports__title" data-ng-class="league.league == '' ? '_title_empty' : ''">
+            {{ league.league }}
+        </h1>
+
+        <div class="b-sports__entries">
+            <article class="b-sports__entry" data-ng-repeat="entry in league.odds | filter:orderLeagues | limitTo:quantity | orderBy:selectedSports | orderBy:selected">
+                <div class="b-sports__entry-head clearfix">
+                    <h3 class="b-sports__entry-title">
+                        <label data-ng-click="saveAction($event)" data-id="{{ entry.id }}">
+                            <input class="b-sports__entry-checkbox" type="checkbox" data-ng-checked="isSelected(entry)">
+                            {{ entry.teams }}
+                        </label>
+                    </h3>
+                    <p class="b-sports__entry-date">
+                        {{ entry.date | date : 'MMMM, d HH:mm' }}
+                    </p>
+                </div>
+
+                <table class="b-table">
+                    <thead class="b-table__head">
+                        <tr class="b-table__row">
+                            <th class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    Bookmakers
+                                </div>
+                            </th>
+                            <th class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    Double change
+                                </div>
+                            </th>
+                            <th class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    Asian HCP
+                                </div>
+                            </th>
+                            <th class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    Totals
+                                </div>
+                            </th>
+                            <th class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    Draw no bet
+                                </div>
+                            </th>
+                            <th class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    Three way
+                                </div>
+                            </th>
+                            <th class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    Money line
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="b-table__body">
+                        <tr class="b-table__row" data-ng-repeat="row in entry.offices">
+                            <td class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    {{ row.bookmakers }}
+                                </div>
+                            </td>
+                            <td class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    <span data-ng-repeat="value in row.moneyLine track by $index">
+                                        {{ value }}
+                                    </span>
+                                    &nbsp;
+                                </div>
+                            </td>
+                            <td class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    <span data-ng-repeat="value in row.asianHandicap track by $index">
+                                        {{ value }}
+                                    </span>
+                                    &nbsp;
+                                </div>
+                            </td>
+                            <td class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    <span data-ng-repeat="value in row.totals track by $index">
+                                        {{ value }}
+                                    </span>
+                                    &nbsp;
+                                </div>
+                            </td>
+                            <td class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    &nbsp;
+                                </div>
+                            </td>
+                            <td class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    &nbsp;
+                                </div>
+                            </td>
+                            <td class="b-table__col">
+                                <div class="b-table__col__inner">
+                                    <span data-ng-repeat="value in row.moneyLine track by $index">
+                                        {{ value }}
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+        </div>
+    </section>
+</div>
+
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-resource/angular-resource.js"></script>
+
+<script src="app/app.js"></script>
+<script src="app/filters/filters.js"></script>
+<script src="app/services/storage.js"></script>
+<script src="app/controllers/sportsCtrl.js"></script>
+</body>
+</html>
